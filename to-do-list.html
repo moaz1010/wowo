@@ -1,0 +1,196 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>To-Do List</title>
+  <style>
+    .completed {
+        text-decoration: line-through;
+        color: grey;
+        font-style: italic;
+    }
+
+    .task {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        padding: 10px;
+        margin: 8px 16px;
+        border: 2px dashed #ccc;
+    }
+
+    .task input[type="checkbox"] {
+        margin-right: 10px;
+        cursor: pointer;
+    }
+
+    .task button {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+    }
+
+
+    .task button:hover {
+        background-color: rgb(211, 207, 207);
+        transition: 1s;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        padding: 40px;
+        text-align: center;
+    }
+
+    input[type="text"] {
+        padding: 15px;
+        padding-right: 30px;
+        border-style: none;
+        border-radius: 20px;
+    }
+
+    input[type="text"]:hover {
+        border-radius: 10px;
+        transition: 1.5s;
+    }
+
+    button {
+        border-style: none;
+        background-color: #00f721f3;
+        border-radius: 5px;
+        padding: 10px;
+    }
+
+    button:hover {
+        cursor: pointer;
+        background-color: #85df6a;
+        transition: 1s;
+    }
+
+    .controls {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    select {
+        padding: 10px;
+        border-radius: 10px;
+        border: none;
+    }
+
+
+
+  </style>
+</head>
+<body>
+ 
+ 
+   <h1>My To-Do List</h1>
+  
+  
+   <select id="filter">
+    <option value="all">All</option>
+    <option value="completed">Completed</option>
+    <option value="uncompleted">Uncompleted</option>
+  </select>
+
+
+  <input type="text" id="taskinput" placeholder="Add a new task">
+  
+  
+  <button onclick="addtask()" id="addtaskbtn">Add</button>
+  <button onclick="clearall()" id="clearallbtn">Clear All</button>
+  
+  <ul id="tasklist"></ul>
+ 
+
+  <script>
+    const inputbox = document.getElementById("taskinput");
+    const btn = document.getElementById("addtaskbtn");
+    const ul = document.getElementById("tasklist");
+    const filter = document.getElementById("filter");
+    function addtask() {
+    const tasktext = inputbox.value;  
+    if (tasktext.trim() === "") {
+      return;
+    }
+    
+    const newtask = document.createElement("li");
+    newtask.classList.add("task")
+   
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+
+    checkbox.addEventListener("change" , function(){
+        newtask.classList.toggle("completed");
+    });
+
+    const taskTextNode = document.createTextNode(tasktext);
+    newtask.appendChild(checkbox);
+    newtask.appendChild(taskTextNode);
+
+
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "❌";
+    deleteBtn.addEventListener("click", function () {
+        ul.removeChild(newtask);
+    });
+
+    newtask.appendChild(deleteBtn);
+
+    ul.appendChild(newtask);
+    inputbox.value = "";
+
+
+}
+    inputbox.addEventListener("keydown" , function(event){
+        if (event.key === "Enter"){
+        addtask();
+        }
+    });
+
+    function clearall() {
+        if (ul.children.length === 0){
+            alert("Nothing To Clear");
+            return;
+        }
+
+        ul.innerHTML = ""
+    }
+
+  
+
+
+     function filterTasks() {
+  const filterValue = filter.value;
+
+  ul.querySelectorAll("li").forEach(task => {
+    const isCompleted = task.classList.contains("completed");
+
+    if (filterValue === "all") {
+      task.style.display = "flex";
+    } else if (filterValue === "completed") {
+      task.style.display = isCompleted ? "flex" : "none";
+    } else if (filterValue === "uncompleted") {
+      task.style.display = !isCompleted ? "flex" : "none";
+    }
+  });
+
+  
+
+}
+
+        filter.addEventListener("change", filterTasks);
+
+  </script>
+
+</body>
+
+</html>

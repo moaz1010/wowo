@@ -1,0 +1,26 @@
+ <!DOCTYPE html>
+<html>
+<head>
+    <title>Trying JS</title>
+</head>
+<body>
+    <input type="text" id="namein" placeholder="Please enter your name">
+    <button onclick="greet()">Greet</button>
+    <p id="greeting"></p>
+
+    <script>
+        function greet() {
+            let name = document.getElementById("namein").value;
+
+            if (name === "") {
+                document.getElementById("greeting").innerText = "Please enter your name!";
+            } else {
+                document.getElementById("greeting").innerText = "Hello, " + name + "!";
+                document.getElementById("namein").value = ""; // Clear input after greeting
+            }
+        }
+
+        
+    </script>
+</body>
+</html>

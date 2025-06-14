@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<head>
+    <title>Still learning  </title>
+    <style>
+            body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    #output {
+      margin-top: 20px;
+      font-size: 1.2em;
+      color: darkblue;
+      font-weight: bold;
+    }
+    #box {
+      width: 200px;
+      height: 100px;
+      background-color: lightgray;
+      text-align: center;
+      line-height: 100px;
+      margin-top: 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    </style>
+</head>
+<body>
+
+    <h1>Testing Events</h1>
+    <input type="text" id="textinput" placeholder="type something here">
+    <div id="box">
+        Hover or click
+    </div>
+    <div id="output">
+        waiting..
+    </div>
+
+
+
+    <script>
+        const input = document.getElementById("textinput");
+        const output = document.getElementById("output");
+        const box = document.getElementById("box");
+
+        input.addEventListener("keydown", function(event) {
+      output.innerText = `You pressed: ${event.key}`;
+    });
+        box.addEventListener("click", function(){
+            output.innerText = "You clicked the box"
+        });
+
+        box.addEventListener("mouseover", function(){
+            output.innerText = "You are hovering over the box";
+            box.style.backgroundColor = "skyblue";
+        });
+
+        box.addEventListener("mouseout", function(){
+            box.style.backgroundColor = "grey";
+            output.innerText = "You are not hovering over the box"
+        });
+
+
+    </script>
+</body>
+</html>

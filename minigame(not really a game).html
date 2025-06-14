@@ -1,0 +1,87 @@
+ <!DOCTYPE html>
+<html>
+<head>
+  <title>Focus Frenzy Mini-Game</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    #box {
+      width: 200px;
+      height: 100px;
+      background-color: lightgray;
+      text-align: center;
+      line-height: 100px;
+      margin-top: 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    #output {
+      margin-top: 20px;
+      font-size: 1.2em;
+      color: darkblue;
+      font-weight: bold;
+    }
+    input {
+      padding: 8px;
+      font-size: 1em;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Focus Frenzy</h1>
+  <p>Instructions: Focus the input, press Enter, type your name,  press Enter, double-click the box, and press Enter!</p>
+
+  <input type="text" id="nameinput" placeholder="Enter your name">
+  <div id="box" tabindex="0">Double Click Me!</div>
+  <div id="output">Game not started...</div>
+
+  <script>
+    const input = document.getElementById("nameinput");
+    const output = document.getElementById("output");
+    const box = document.getElementById("box");
+
+    let name = "";
+    let boxClicked = false;
+
+    input.addEventListener("focus", function() {
+      output.innerText = "Currently typing...";
+    });
+
+    input.addEventListener("blur", function() {
+      output.innerText = "No longer typing.";
+    });
+
+   input.addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    name = input.value.trim();
+    if (name === "") {
+      output.innerText = "Please enter your name.";
+    } else if (!boxClicked) {
+      output.innerText = `Hello, ${name}! Now double-click the box.`;
+    } else {
+      output.innerText = `🎉 Congratulations, ${name}! You have wasted a minute of your life.`;
+    }
+  }
+ 
+});
+
+  box.addEventListener("dblclick", function() {
+  boxClicked = true;
+  if (name === "") {
+    output.innerText = "Box clicked. Now enter your name.";
+  } else {
+    output.innerText = `Box clicked, ${name}. Now re-focus to the input and press Enter to finish.`;
+    setTimeout(function(){
+    output.innerText = "The game will Now Restart"
+  }, 3000);
+  }
+});
+
+  </script>
+
+</body>
+</html>
