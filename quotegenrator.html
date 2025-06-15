@@ -44,11 +44,18 @@
     const btn = document.getElementById("newquotebtn");
 
 function getquote() {
-  fetch("https://api.quotable.io/random")
+  fetch("https://api.api-ninjas.com/v1/quotes", 
+    { 
+      mode:"cors" ,
+      headers: {
+        "X-Api-Key": "dJQcOjlOvG4ymFQyKJ63Iw==9xhIJZJd3SuuKj7E"
+      }
+    })
     .then(res => res.json())
+    .then(res => res[0])
     .then(data => {
       console.log(data); // This will show the quote and author
-      quoteEl.textContent = `"${data.content}"`;
+      quoteEl.textContent = `"${data.quote}"`;
       authorEl.textContent = `– ${data.author}`;
     })
     .catch(err => {
