@@ -82,8 +82,11 @@
         border-radius: 10px;
         border: none;
     }
-
-
+  
+    p {
+      font-family: Arial, sans-serif;
+      font-style: bold;
+    }
 
   </style>
 </head>
@@ -105,7 +108,7 @@
   
   <button onclick="addtask()" id="addtaskbtn">Add</button>
   <button onclick="clearall()" id="clearallbtn">Clear All</button>
-  
+  <h3 id="counter">Total: 0 | Completed: 0 | Remaining: 0</h3>
   <ul id="tasklist"></ul>
  
 
@@ -114,13 +117,14 @@
     const btn = document.getElementById("addtaskbtn");
     const ul = document.getElementById("tasklist");
     const filter = document.getElementById("filter");
-    function addtask() {
+  function addtask() {
     const tasktext = inputbox.value;  
     if (tasktext.trim() === "") {
       return;
     }
     
     const newtask = document.createElement("li");
+    newtask.setAttribute("draggable", "true")
     newtask.classList.add("task")
    
 
@@ -129,11 +133,14 @@
 
     checkbox.addEventListener("change" , function(){
         newtask.classList.toggle("completed");
+        savetaskstolocalstorage();
+        updcounter();
     });
 
-    const taskTextNode = document.createTextNode(tasktext);
+    const span = document.createElement("span");
+    span.textContent = tasktext;
     newtask.appendChild(checkbox);
-    newtask.appendChild(taskTextNode);
+    newtask.appendChild(span);
 
 
 
@@ -141,6 +148,8 @@
     deleteBtn.textContent = "❌";
     deleteBtn.addEventListener("click", function () {
         ul.removeChild(newtask);
+        savetaskstolocalstorage();
+        updcounter();
     });
 
     newtask.appendChild(deleteBtn);
@@ -149,7 +158,9 @@
     inputbox.value = "";
 
 
-}
+    savetaskstolocalstorage();
+    updcounter();
+  }
     inputbox.addEventListener("keydown" , function(event){
         if (event.key === "Enter"){
         addtask();
@@ -160,9 +171,12 @@
         if (ul.children.length === 0){
             alert("Nothing To Clear");
             return;
+           updcounter()
         }
 
         ul.innerHTML = ""
+         savetaskstolocalstorage();
+         updcounter();
     }
 
   
@@ -187,9 +201,126 @@
 
 }
 
+  function savetaskstolocalstorage() {
+    const tasks = [];
+
+    ul.querySelectorAll("li").forEach(task => {
+      tasks.push({
+        text: task.querySelector("span").textContent,
+        completed: task.classList.contains("completed")
+      });
+    });
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  };
+
         filter.addEventListener("change", filterTasks);
 
-  </script>
+
+    function loadtasksfromlocalstorage() {
+      const saved = JSON.parse(localStorage.getItem("tasks")) || [];
+
+      saved.forEach(task => {
+        const newtask = document.createElement("li");
+        newtask.setAttribute("draggable", "true")
+        newtask.classList.add("task")
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+
+        if (task.completed) {
+          newtask.classList.add("completed");
+          checkbox.checked = true;
+        }
+
+        checkbox.addEventListener("change", function () {
+         newtask.classList.toggle("completed");
+         savetaskstolocalstorage();
+        });
+
+        const span = document.createElement("span");
+        span.textContent = task.text;
+        newtask.appendChild(checkbox);
+        newtask.appendChild(span);
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "❌";
+        deleteBtn.addEventListener("click", function(){
+            ul.removeChild(newtask);
+            savetaskstolocalstorage();
+        });
+
+        newtask.appendChild(deleteBtn);
+        ul.appendChild(newtask);
+
+        updcounter()
+      });
+    }
+
+    loadtasksfromlocalstorage();
+
+    let draggedtask = null;
+
+    ul.addEventListener("dragstart", function(e){
+      if (e.target.name === "LI") {
+        draggedtask = e.target;
+        e.target.style.opacity = "0.5";
+      }
+    });
+
+    ul.addEventListener("dragend", function (e) {
+      if (e.target.tagName === "LI") {
+      draggedTask = null;
+      e.target.style.opacity = "1";
+      }
+    });
+
+    ul.addEventListener("dragover", function (e) {
+  e.preventDefault(); 
+  const afterElement = getDragAfterElement(ul, e.clientY);
+  
+  if (afterElement == null) {
+    ul.appendChild(draggedtask); 
+  } else {
+    ul.insertBefore(draggedtask, afterElement); 
+  }
+
+  savetaskstolocalstorage(); 
+});
+
+
+     function getDragAfterElement(container, y) {
+  const draggableElements = [...container.querySelectorAll(".task:not(.dragging)")];
+
+  return draggableElements.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+
+    if (offset < 0 && offset > closest.offset) {
+      return { offset: offset, element: child };
+    } else {
+      return closest;
+    }
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+
+function updcounter(){
+  const tasks = ul.querySelectorAll("li");
+  const total = tasks.length;
+
+  let completed = 0;
+  tasks.forEach(task => {
+    if (task.classList.contains("completed")) {
+      completed++;
+    }
+  });
+
+  const Remaining = total - completed;
+
+  document.getElementById("counter").textContent = `Total: ${total} | Completed : ${completed} |
+  Remaining : ${Remaining}`;
+}
+  </script> 
 
 </body>
 
