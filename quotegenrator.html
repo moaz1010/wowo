@@ -47,7 +47,7 @@ function getquote() {
   fetch("https://api.quotable.io/random")
     .then(res => res.json())
     .then(data => {
-      console.log(data); // This will show the quote and author
+      console.log(data);
       quoteEl.textContent = `"${data.content}"`;
       authorEl.textContent = `– ${data.author}`;
     })
